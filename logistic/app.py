@@ -27,6 +27,15 @@ def fetch():
     data = cur.fetchall()
     return "<p>{}</p>".format(data[0])
 
+
+'''
+    burasi person listelenmesi için kullanilacak
+    content array olacak buna gore frontend de basilacak
+'''
+@app.route("/person/list", methods = ['POST', 'GET'])
+def personList():
+    return render_template("personList.html")
+
 @app.route("/person/add", methods = ['POST', 'GET'])
 def person():
     if request.method == 'POST':
@@ -45,24 +54,40 @@ def person():
         cur.execute(insert_string, (ssn, personal_name, job_title, email, phone_number))
         print("inserted")
         conn.commit()
-        return render_template("person.html", result=result)
+        return render_template("person.html", result=result,title="Personel Yonetim")
 
-    return render_template("person.html")
+    return render_template("person.html",title="Personel Yonetim")
 
 '''
 buradaki dashboad methodu personel ekleme ve personel yonetiminde kullanilacaktir 
 '''
 @app.route("/dashboard")
 def dashboard():
-    return render_template("dashboard.html")
+    return render_template("dashboard.html",title="dashboard")
 
 @app.route("/login")
 def login():
-    return render_template("login.html")
+    return render_template("login.html",title="Login")
 
 @app.route("/signup")
 def signup():
-    return render_template("signup.html")
+    return render_template("signup.html",title="Sign up")
+
+'''
+depolarin listelenmesinde ullanilacak olan method
+'''
+@app.route("/depo/list")
+def depotList():
+    return render_template("depo.html",title="Depo listesi")
+
+'''
+depolarin yonetiminde kullanilacak sayfa
+'''
+@app.route("/depo/arrange")
+def depotArrangnment():
+    return render_template("depoArrangment.html",title="Depo listesi")
+
+
 
 if __name__=='__main__':
     app.run(debug=True)

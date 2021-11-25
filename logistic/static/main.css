@@ -7,6 +7,9 @@ body {
   h1, h2, h3, h4, h5, h6 {
     color: #000000;
   }
+  h2{
+    text-align: center;
+  }
   
   .bg-steel {
     background-color: #03900f;

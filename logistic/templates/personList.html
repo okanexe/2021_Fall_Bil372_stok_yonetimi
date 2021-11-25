@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h2 >Personel listesi</h2>
+<div class="sidebar">
+    <a href="/person/add">Personel Ekle</a>
+    <a href="/person/list">Personel Listesi</a>
+  </div>
+<div>
+    {% if content %}
+        {% for depo in content %}
+            
+            <td>
+                {{depo}}
+            </td> 
+                
+        {% endfor %}
+    {% endif %}   
+</div>
+    
+{% endblock content %}
