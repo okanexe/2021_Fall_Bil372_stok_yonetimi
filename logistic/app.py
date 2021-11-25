@@ -28,5 +28,16 @@ def fetch():
     return "<p>{}</p>".format(data[0])
 
 
+'''
+buradaki dashboad methodu personel ekleme ve personel yonetiminde kullanilacaktir 
+'''
+@app.route("/dashboard")
+def dashboard():
+    return render_template("dashboard.html")
+
+@app.route("/login")
+def login():
+    return render_template("login.html")
+
 if __name__=='__main__':
     app.run(debug=True)
