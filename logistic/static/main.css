@@ -127,15 +127,19 @@ div.liste{
   text-align: center;
   color: #070606;
 }
-table,td,tr {
-  border: 1px solid black;
-  border-collapse: collapse;
+table,td,tr,th {
+  border: 2px solid black;
+  border-collapse: separate;
   text-align: left;
   vertical-align: top;
-  margin-left: auto;
+  margin-left: 30%;
   margin-right: auto;
-  width: 20%;
-  height: 20%;
+  width: max-content;
+  height: max-content;
+  white-space: nowrap;
+}
+th{
+  color: #03900f;
 }
 
 /* Page content. The value of the margin-left property should match the value of the sidebar's width property */
@@ -165,3 +169,6 @@ div.content {
   }
 }
 
+div.box{
+  margin-left: 38%;
+}

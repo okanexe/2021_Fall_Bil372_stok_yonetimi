@@ -5,24 +5,34 @@
     <a href="/depo/arrange">Depoları duzenle</a>
 </div>
 <h2>Depo listesi</h2>
-<div class="liste">
+<div >
     <table>
-    {% if content %}
-        {% for depo in content %}
-        
-            <table>
-                <td>
-                    {{depo}}
-                </td>
-                
-
-            </table>
-            
-        {% endfor %}
-    {% endif %} 
+        <tr>
+            <th>Branch ID</th>
+            <th>Branch Name</th>
+            <th>Adress ID</th>
+            <th>Branch Capacity</th>
+            <th>Branch City</th>
+            <th>Branch Distinct</th>
+            <th>Branch Apartment No</th>
+           
+          </tr>
+        {% if content %}
+            {% for depo in content %}
+                <tr>
+                    <td>{{depo[0]}}</td>
+                    <td>{{depo[1]}}</td>
+                    <td>{{depo[2]}}</td>
+                    <td>{{depo[3]}}</td>
+                    <td>{{depo[5]}}</td>
+                    <td>{{depo[6]}}</td>
+                    <td>{{depo[7]}}</td>
+                    
+                </tr>
+                    
+            {% endfor %}
+        {% endif %}   
     </table>
-      
-
 </div>
     
 {% endblock content %}

@@ -1,8 +1,12 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="column is-4 is-offset-4">
-    <h3 class="title">Person add</h3>
+<div class="sidebar">
+    <a href="/person/add">Personel Ekle</a>
+    <a href="/person/list">Personel Listesi</a>
+</div>
+<div class="person_add">
+    <h2 class="title">Person add</h2>
     <div class="box">
         <form method="POST" action="/person/add">
             <div class="field">

@@ -34,7 +34,7 @@ def fetch():
 '''
 @app.route("/person/list", methods = ['POST', 'GET'])
 def personList():
-    conn = psycopg2.connect("dbname=guru99 user=okans password=")
+    conn = psycopg2.connect("dbname=guru99 user=postgres password=1030")
     cur = conn.cursor()
     sql_command = "select * from personal"
     cur.execute(sql_command)
@@ -45,7 +45,7 @@ def personList():
 def person():
     if request.method == 'POST':
         result = request.form
-        conn = psycopg2.connect("dbname=guru99 user=okans password=")
+        conn = psycopg2.connect("dbname=guru99 user=postgres password=1030")
         cur = conn.cursor()
 
         ssn = result.get("ssn")
@@ -66,7 +66,7 @@ def person():
 '''
 buradaki dashboad methodu personel ekleme ve personel yonetiminde kullanilacaktir 
 '''
-@app.route("/dashboard", methods = ['POST', 'GET'])
+@app.route("/personel", methods = ['POST', 'GET'])
 def dashboard():
     return render_template("dashboard.html",title="dashboard")
 
@@ -83,8 +83,12 @@ depolarin listelenmesinde ullanilacak olan method
 '''
 @app.route("/depo/list", methods = ['POST', 'GET'])
 def depot_list():
-    content = ["Ford", "Volvo", "BMW"]
-    return render_template("depo.html",title="Depo listesi",content=content)
+    conn = psycopg2.connect("dbname=guru99 user=postgres password=1030")
+    cur = conn.cursor()
+    sql_command = "select * from branch join address on addressid=address_id "
+    cur.execute(sql_command)
+    data = cur.fetchall()
+    return render_template("depo.html",content=data, title="Depo listesi")
 
 '''
 depolarin yonetiminde kullanilacak sayfa
