@@ -1,5 +1,10 @@
 body {
     background: #f7f7f7;
+    background-image: url("andy.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: auto;
+    background-position-y: 32%;
     color: #000000;
     margin-top: 5rem;
   }
@@ -92,9 +97,9 @@ body {
   margin: 0;
   padding: 0;
   width: 200px;
-  background-color: #f1f1f1;
+  background-color: transparent;
   position: fixed;
-  height: 100%;
+  height: 45%;
   overflow: auto;
 }
 
@@ -114,7 +119,7 @@ body {
 
 /* Links on mouse-over */
 .sidebar a:hover:not(.active) {
-  background-color: #555;
+  background-color: rgb(197, 0, 0);
   color: white;
 }
 
