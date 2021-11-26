@@ -1,7 +1,36 @@
 from flask import Flask, render_template, request
 import psycopg2
+from flask_sqlalchemy import SQLAlchemy
+
 
 app = Flask(__name__)
+
+CONFIG = {
+   'postgresUrl':'localhost:5432',
+   'postgresUser':'okans',
+   'postgresPass':'',
+   'postgresDb':'guru99',
+}
+
+POSTGRES_URL = CONFIG['postgresUrl']
+POSTGRES_USER = CONFIG['postgresUser']
+POSTGRES_PASS = CONFIG['postgresPass']
+POSTGRES_DB = CONFIG['postgresDb']
+DB_URL = 'postgresql+psycopg2://{user}:{pw}@{url}/{db}'.format(user=POSTGRES_USER, pw=POSTGRES_PASS, url=POSTGRES_URL, db=POSTGRES_DB)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
+db = SQLAlchemy(app)
+
+class User(db.Model):
+    __tablename__ = "users"
+    user_id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(120), unique=True)
+    email = db.Column(db.String(120), unique=True)
+
+    def __init__(self, username, email):
+        self.username = username
+        self.email = email
+
 
 # db yaratmak için
 # createdb -h localhost -p 5432 -U <username> <dbname>
@@ -34,7 +63,32 @@ def fetch():
 '''
 @app.route("/person/list", methods = ['POST', 'GET'])
 def personList():
-    return render_template("personList.html")
+    conn = psycopg2.connect("dbname=guru99 user=okans password=")
+    cur = conn.cursor()
+    sql_command = "select * from personal"
+    cur.execute(sql_command)
+    data = cur.fetchall()
+    return render_template("personList.html", content=data)
+
+@app.route("/person/update", methods = ['POST', 'GET'])
+def person_update():
+    conn = psycopg2.connect("dbname=guru99 user=okans password=")
+    cur = conn.cursor()
+    cur.execute("select * from personal")
+    ssn = [item[0] for item in cur.fetchall()]
+    print(ssn)
+    if request.method == 'POST':
+        result = request.form
+        print(result.keys())
+        print(result.get('ssn'))
+        for key in result.keys():
+            if key == 'ssn':
+                sql_command = "UPDATE personal SET ssn = %s where ssn = %s"
+                cur.execute(sql_command, (result.get('new_ssn'), result.get('ssn')))
+                conn.commit()
+        return render_template("person_update.html")
+
+    return render_template("person_update.html", personal_list=ssn)
 
 @app.route("/person/add", methods = ['POST', 'GET'])
 def person():
@@ -78,7 +132,12 @@ depolarin listelenmesinde ullanilacak olan method
 '''
 @app.route("/depo/list")
 def depotList():
-    return render_template("depo.html",title="Depo listesi")
+    conn = psycopg2.connect("dbname=guru99 user=okans password=")
+    cur = conn.cursor()
+    sql_command = "select * from branch"
+    cur.execute(sql_command)
+    data = cur.fetchall()
+    return render_template("depo.html",content=data, title="Depo listesi")
 
 '''
 depolarin yonetiminde kullanilacak sayfa
