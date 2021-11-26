@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request
+from flask import Flask,flash, render_template, request
 import psycopg2
 
 app = Flask(__name__)
-
+app.config['SECRET_KEY'] = 'a989e8c0679101b2fa3f510eea014e41'
 # db yaratmak için
 # createdb -h localhost -p 5432 -U <username> <dbname>
 # postgresql bağlanmak için
@@ -57,9 +57,9 @@ def person():
         insert_string = "INSERT INTO personal(ssn, personal_name, job_title, email, phone_number) " \
                         "VALUES(%s, %s, %s, %s, %s);"
         cur.execute(insert_string, (ssn, personal_name, job_title, email, phone_number))
-        print("inserted")
+        flash('personal is inserted')
         conn.commit()
-        return render_template("person.html", result=result,title="Personel Yonetim")
+        return render_template("person.html", result=result,title="Personel Ekleme")
 
     return render_template("person.html",title="Personel Yonetim")
 
@@ -68,7 +68,7 @@ buradaki dashboad methodu personel ekleme ve personel yonetiminde kullanilacakti
 '''
 @app.route("/personel", methods = ['POST', 'GET'])
 def dashboard():
-    return render_template("dashboard.html",title="dashboard")
+    return render_template("dashboard.html",title="Personel Yonetim")
 
 @app.route("/login", methods = ['POST', 'GET'])
 def login():
