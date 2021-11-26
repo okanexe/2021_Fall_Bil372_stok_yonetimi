@@ -5,16 +5,24 @@
     <a href="/depo/arrange">Depoları duzenle</a>
 </div>
 <h2>Depo listesi</h2>
-<div>
+<div class="liste">
+    <table>
     {% if content %}
         {% for depo in content %}
-            
-            <td>
-                {{depo}}
-            </td> 
+        
+            <table>
+                <td>
+                    {{depo}}
+                </td>
                 
+
+            </table>
+            
         {% endfor %}
-    {% endif %}   
+    {% endif %} 
+    </table>
+      
+
 </div>
     
 {% endblock content %}

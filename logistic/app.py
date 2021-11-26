@@ -34,7 +34,12 @@ def fetch():
 '''
 @app.route("/person/list", methods = ['POST', 'GET'])
 def personList():
-    return render_template("personList.html")
+    conn = psycopg2.connect("dbname=guru99 user=okans password=")
+    cur = conn.cursor()
+    sql_command = "select * from personal"
+    cur.execute(sql_command)
+    data = cur.fetchall()
+    return render_template("personList.html", content=data,title="Anasayfa")
 
 @app.route("/person/add", methods = ['POST', 'GET'])
 def person():
@@ -61,30 +66,31 @@ def person():
 '''
 buradaki dashboad methodu personel ekleme ve personel yonetiminde kullanilacaktir 
 '''
-@app.route("/dashboard")
+@app.route("/dashboard", methods = ['POST', 'GET'])
 def dashboard():
     return render_template("dashboard.html",title="dashboard")
 
-@app.route("/login")
+@app.route("/login", methods = ['POST', 'GET'])
 def login():
     return render_template("login.html",title="Login")
 
-@app.route("/signup")
+@app.route("/signup", methods = ['POST', 'GET'])
 def signup():
     return render_template("signup.html",title="Sign up")
 
 '''
 depolarin listelenmesinde ullanilacak olan method
 '''
-@app.route("/depo/list")
-def depotList():
-    return render_template("depo.html",title="Depo listesi")
+@app.route("/depo/list", methods = ['POST', 'GET'])
+def depot_list():
+    content = ["Ford", "Volvo", "BMW"]
+    return render_template("depo.html",title="Depo listesi",content=content)
 
 '''
 depolarin yonetiminde kullanilacak sayfa
 '''
-@app.route("/depo/arrange")
-def depotArrangnment():
+@app.route("/depo/arrange", methods = ['POST', 'GET'])
+def depot_arrangnment():
     return render_template("depoArrangment.html",title="Depo listesi")
 
 
