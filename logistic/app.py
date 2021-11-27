@@ -193,8 +193,8 @@ depolarin listelenmesinde ullanilacak olan method
 '''
 @app.route("/depo/list")
 def depotList():
-    branches = branch.query.all()
-    return render_template("depo.html",content=branches, title="Depo listesi")
+    branches = branch.query.join(address, branch.address_id == address.address_id)
+    return render_template("depo.html", content=branches, title="Depo listesi")
 
 '''
 depolarin yonetiminde kullanilacak sayfa
