@@ -1,16 +1,31 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, redirect, g, url_for
+import os
 import psycopg2
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24)
 
 # db yaratmak için
 # createdb -h localhost -p 5432 -U <username> <dbname>
 # postgresql bağlanmak için
 # psql -h localhost -p 5432 -d postgres
 
-@app.route("/")
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template("index.html")
+	if request.method == 'POST':
+		session.pop('user', None)
+		
+		if request.form['password'] == 'password':
+			session['user'] = request.form['username']
+			return redirect(url_for('protected'))
+		
+	return render_template('index.html')	
+	
+@app.route('/protected')
+def protected():
+ 	if g.user:
+ 		return render_template	('protected.html',user=session['user'])
+ 	return redirect(url_for('index'))	
 
 @app.route("/adress")
 def fetch():
@@ -26,6 +41,19 @@ def fetch():
 
     data = cur.fetchall()
     return "<p>{}</p>".format(data[0])
+    
+@app.before_request
+def before_request():
+ 	g.user = None
+ 	
+ 	if 'user' in session:
+ 		g.user = session['user']
+ 		
+ 		
+@app.route('/dropsession')
+def dropsession():
+	session.pop('user', None)
+	return render_template('index.html') 	 		    
 
 
 '''
@@ -65,16 +93,9 @@ buradaki dashboad methodu personel ekleme ve personel yonetiminde kullanilacakti
 def dashboard():
     return render_template("dashboard.html",title="dashboard")
 
-@app.route("/login")
-def login():
-    return render_template("login.html",title="Login")
-
-@app.route("/signup")
-def signup():
-    return render_template("signup.html",title="Sign up")
 
 '''
-depolarin listelenmesinde ullanilacak olan method
+depolarin listelenmesinde kullanilacak olan method
 '''
 @app.route("/depo/list")
 def depotList():
