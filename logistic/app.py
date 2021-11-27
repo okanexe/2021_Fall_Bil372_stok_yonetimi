@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request
-import psycopg2
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -145,24 +144,16 @@ def personList():
 def person_update():
     personals = personal.query.all()
     ssn = [item.ssn for item in personals]
-    print(ssn)
     if request.method == 'POST':
         data = request.form
-        person = personal.query.filter_by(ssn=data.get('getssn')).first()
-        for key in data.keys():
-            if key == 'ssn':
-                print(data.get('ssn'))
-                person.ssn = data.get('ssn')
-                db.session.commit()
-            if key == 'personal_name':
-                person.personal_name = data.get('personal_name')
-            if key == 'job_title':
-                person.job_title = data.get('job_title')
-            if key == 'email':
-                person.email = data.get('email')
-            if key == 'phone_number':
-                person.phone_number = data.get('phone_number')
-            db.session.commit()
+        getssn = data.get('getssn')
+        data_dict = dict((key, request.form.get(key)) for key in data.keys())
+        data_dict.pop('getssn')
+        for k in data.keys():
+            if data_dict.get(k) == '':
+                data_dict.pop(k)
+        personal.query.filter_by(ssn=str(getssn)).update(data_dict)
+        db.session.commit()
         return render_template("person_update.html")
     return render_template("person_update.html", personal_list=ssn)
 
