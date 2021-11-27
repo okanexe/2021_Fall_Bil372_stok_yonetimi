@@ -5,10 +5,10 @@ from sqlalchemy import Float, Integer
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a989e8c0679101b2fa3f510eea014e41'
 DB_URL = 'postgresql+psycopg2://{user}:{pw}@{url}/{db}'.format(
-    user='postgres',
-    pw='1030',
+    user='okans',
+    pw='',
     url='localhost:5432',
-    db='guru99'
+    db='logistic'
 )
 app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
 db = SQLAlchemy(app)
@@ -244,6 +244,39 @@ def product_add():
         db.session.commit()
         flash('Urun eklendi')
     return render_template("product.html", product_list = ['beverage', 'butcher', 'cleaning'],title="Urun Ekleme")
+
+@app.route("/delivery/list")
+def delivery_list():
+    content = delivery.query.add_columns(
+        delivery.delivery_id,
+        store.store_name,
+        branch.branch_name,
+        vehicle.plate
+    ).filter(
+        delivery.store_id==store.store_id
+    ).filter(
+        delivery.branch_id==branch.branch_id
+    ).filter(
+        delivery.vehicle_id==vehicle.vehicle_id
+    )
+    for c in content:
+        print(c)
+    return render_template("delivery.html", content=content)
+
+@app.route("/delivery/add", methods = ['POST', 'GET'])
+def delivery_add():
+    if request.method == 'POST':
+        data = request.form
+        mov = delivery(
+            delivery_id=data.get("delivery_id"),
+            store_id=data.get("store_id"),
+            branch_id=data.get("branch_id"),
+            vehicle_id=data.get("vehicle_id")
+        )
+        db.session.add(mov)
+        db.session.commit()
+        flash('Urun eklendi')
+    return render_template("delivery_add.html")
 
 if __name__=='__main__':
     app.run(debug=True)
