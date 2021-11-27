@@ -212,6 +212,20 @@ def product_add():
         db.session.commit()
     return render_template("product.html", product_list = ['beverage', 'butcher', 'cleaning'])
 
+@app.route("/product/list", methods = ['POST', 'GET'])
+def product_list():
+    if request.method == 'POST':
+        data = request.form
+        type = data.get('getproduct')
+        if type == 'beverage':
+            content = beverage.query.all()
+        elif type == 'butcher':
+            content = butcher.query.all()
+        else:
+            content = cleaning.query.all()
+        return render_template("product_list.html", content = content)
+    return render_template("product_list.html", product_list = ['beverage', 'butcher', 'cleaning'])
+
 '''
 buradaki dashboad methodu personel ekleme ve personel yonetiminde kullanilacaktir 
 '''
