@@ -13,20 +13,22 @@
             <th>Adress ID</th>
             <th>Branch Capacity</th>
             <th>Branch City</th>
-            <th>Branch Distinct</th>
+            <th>Branch Town</th>
+            <th>Branch Disrict</th>
             <th>Branch Apartment No</th>
            
           </tr>
         {% if content %}
             {% for depo in content %}
                 <tr>
-                    <td>{{depo[0]}}</td>
-                    <td>{{depo[1]}}</td>
-                    <td>{{depo[2]}}</td>
-                    <td>{{depo[3]}}</td>
-                    <td>{{depo[5]}}</td>
-                    <td>{{depo[6]}}</td>
-                    <td>{{depo[7]}}</td>
+                    <td>{{depo.branch_id}}</td>
+                    <td>{{depo.branch_name}}</td>
+                    <td>{{depo.address_id}}</td>
+                    <td>{{depo.capacity}}</td>
+                    <td>{{depo.country_name}}</td>
+                    <td>{{depo.town_name}}</td>
+                    <td>{{depo.district_name}}</td>
+                    <td>{{depo.apartment_no}}</td>
                     
                 </tr>
                     

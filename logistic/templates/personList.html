@@ -2,6 +2,7 @@
 {% block content %}
 
 <div class="sidebar">
+    <a href="/person/update">Personel Guncelleme</a>
     <a href="/person/add">Personel Ekle</a>
     <a href="/person/list">Personel Listesi</a>
 </div>
@@ -18,11 +19,11 @@
         {% if content %}
             {% for person in content %}
                 <tr>
-                    <td>{{person[0]}}</td>
-                    <td>{{person[1]}}</td>
-                    <td>{{person[2]}}</td>
-                    <td>{{person[3]}}</td>
-                    <td>{{person[4]}}</td>
+                    <td>{{person.ssn}}</td>
+                    <td>{{person.personal_name}}</td>
+                    <td>{{person.job_title}}</td>
+                    <td>{{person.email}}</td>
+                    <td>{{person.phone_number}}</td>
                 </tr>
                     
             {% endfor %}
