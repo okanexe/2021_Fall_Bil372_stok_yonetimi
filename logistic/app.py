@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Float, Integer
 
 app = Flask(__name__)
 
@@ -172,6 +173,44 @@ def person():
         db.session.commit()
         return render_template("person.html", title="Personel Yonetim")
     return render_template("person.html",title="Personel Yonetim")
+
+@app.route("/product/add", methods = ['POST', 'GET'])
+def product_add():
+    if request.method == 'POST':
+        data = request.form
+        try:
+            # eğer ürün miktar içeriyorsa butcher yada beverage ürününe eklenecek
+            int(data.get("quantity")) / 1
+            if data.get('getproduct') == 'beverage':
+                product = beverage(
+                    product_id = data.get('product_id'),
+                    product_name = data.get('product_name'),
+                    price = float(data.get('price')),
+                    expiration_date = data.get('expiration_date'),
+                    kdv = float(data.get('kdv')),
+                    quantity_lt = float(data.get('quantity'))
+                )
+            if data.get('getproduct') == 'butcher':
+                product = butcher(
+                    product_id=data.get('product_id'),
+                    product_name=data.get('product_name'),
+                    price=float(data.get('price')),
+                    expiration_date=data.get('expiration_date'),
+                    kdv=float(data.get('kdv')),
+                    quantity_kg=float(data.get('quantity'))
+                )
+        except:
+            product = cleaning(
+                product_id=data.get('product_id'),
+                product_name=data.get('product_name'),
+                price=float(data.get('price')),
+                expiration_date=data.get('expiration_date'),
+                kdv=float(data.get('kdv')),
+                clean_type=data.get('quantity')
+            )
+        db.session.add(product)
+        db.session.commit()
+    return render_template("product.html", product_list = ['beverage', 'butcher', 'cleaning'])
 
 '''
 buradaki dashboad methodu personel ekleme ve personel yonetiminde kullanilacaktir 
