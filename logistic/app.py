@@ -134,81 +134,52 @@ class product_demand(db.Model):
 
 @app.route("/")
 def index():
-    #user = User.query.filter_by(username="elifcan").first()
-    result = db.engine.execute("select * from personal")
-    data = [row[0] for row in result]
-    print(data)
     return render_template("index.html")
 
-@app.route("/adress")
-def fetch():
-    conn = psycopg2.connect("dbname=guru99 user=okans password=")
-    cur = conn.cursor()
-
-    try:
-        cur.execute('select * from address')
-    except:
-        conn.rollback()
-    else:
-        conn.commit()
-
-    data = cur.fetchall()
-    return "<p>{}</p>".format(data[0])
-
-
-'''
-    burasi person listelenmesi için kullanilacak
-    content array olacak buna gore frontend de basilacak
-'''
 @app.route("/person/list", methods = ['POST', 'GET'])
 def personList():
-    conn = psycopg2.connect("dbname=guru99 user=okans password=")
-    cur = conn.cursor()
-    sql_command = "select * from personal"
-    cur.execute(sql_command)
-    data = cur.fetchall()
+    data = personal.query.all()
     return render_template("personList.html", content=data)
 
 @app.route("/person/update", methods = ['POST', 'GET'])
 def person_update():
-    conn = psycopg2.connect("dbname=guru99 user=okans password=")
-    cur = conn.cursor()
-    cur.execute("select * from personal")
-    ssn = [item[0] for item in cur.fetchall()]
+    personals = personal.query.all()
+    ssn = [item.ssn for item in personals]
     print(ssn)
     if request.method == 'POST':
-        result = request.form
-        print(result.keys())
-        print(result.get('ssn'))
-        for key in result.keys():
+        data = request.form
+        person = personal.query.filter_by(ssn=data.get('getssn')).first()
+        for key in data.keys():
             if key == 'ssn':
-                sql_command = "UPDATE personal SET ssn = %s where ssn = %s"
-                cur.execute(sql_command, (result.get('new_ssn'), result.get('ssn')))
-                conn.commit()
+                print(data.get('ssn'))
+                person.ssn = data.get('ssn')
+                db.session.commit()
+            if key == 'personal_name':
+                person.personal_name = data.get('personal_name')
+            if key == 'job_title':
+                person.job_title = data.get('job_title')
+            if key == 'email':
+                person.email = data.get('email')
+            if key == 'phone_number':
+                person.phone_number = data.get('phone_number')
+            db.session.commit()
         return render_template("person_update.html")
-
     return render_template("person_update.html", personal_list=ssn)
 
 @app.route("/person/add", methods = ['POST', 'GET'])
 def person():
     if request.method == 'POST':
-        result = request.form
-        conn = psycopg2.connect("dbname=guru99 user=okans password=")
-        cur = conn.cursor()
-
-        ssn = result.get("ssn")
-        personal_name = result.get("personal_name")
-        job_title = result.get("job_title")
-        email = result.get("email")
-        phone_number = result.get("phone_number")
-
-        insert_string = "INSERT INTO personal(ssn, personal_name, job_title, email, phone_number) " \
-                        "VALUES(%s, %s, %s, %s, %s);"
-        cur.execute(insert_string, (ssn, personal_name, job_title, email, phone_number))
-        print("inserted")
-        conn.commit()
-        return render_template("person.html", result=result,title="Personel Yonetim")
-
+        data = request.form
+        person = personal(
+            ssn=data.get('ssn'),
+            personal_name=data.get('personal_name'),
+            job_title=data.get('job_title'),
+            email=data.get('email'),
+            phone_number=data.get('phone_number')
+        )
+        db.session.add(person)
+        db.session.commit()
+        return render_template("person.html", title="Personel Yonetim")
     return render_template("person.html",title="Personel Yonetim")
 
 '''
@@ -231,12 +202,8 @@ depolarin listelenmesinde ullanilacak olan method
 '''
 @app.route("/depo/list")
 def depotList():
-    conn = psycopg2.connect("dbname=guru99 user=okans password=")
-    cur = conn.cursor()
-    sql_command = "select * from branch"
-    cur.execute(sql_command)
-    data = cur.fetchall()
-    return render_template("depo.html",content=data, title="Depo listesi")
+    branches = branch.query.all()
+    return render_template("depo.html",content=branches, title="Depo listesi")
 
 '''
 depolarin yonetiminde kullanilacak sayfa
