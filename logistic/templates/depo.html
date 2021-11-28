@@ -1,20 +1,40 @@
-{% extends "protected.html" %}
+{% extends "layout.html" %}
 {% block content %}
 <div class="sidebar">
     <a href="/depo/list">Depoları listele</a>
     <a href="/depo/arrange">Depoları duzenle</a>
 </div>
 <h2>Depo listesi</h2>
-<div>
-    {% if content %}
-        {% for depo in content %}
-            
-            <td>
-                {{depo}}
-            </td> 
-                
-        {% endfor %}
-    {% endif %}   
+<div >
+    <table>
+        <tr>
+            <th>Branch ID</th>
+            <th>Branch Name</th>
+            <th>Adress ID</th>
+            <th>Branch Capacity</th>
+            <th>Branch City</th>
+            <th>Branch Town</th>
+            <th>Branch Disrict</th>
+            <th>Branch Apartment No</th>
+           
+          </tr>
+        {% if content %}
+            {% for depo in content %}
+                <tr>
+                    <td>{{depo.branch_id}}</td>
+                    <td>{{depo.branch_name}}</td>
+                    <td>{{depo.address_id}}</td>
+                    <td>{{depo.capacity}}</td>
+                    <td>{{depo.country_name}}</td>
+                    <td>{{depo.town_name}}</td>
+                    <td>{{depo.district_name}}</td>
+                    <td>{{depo.apartment_no}}</td>
+                    
+                </tr>
+                    
+            {% endfor %}
+        {% endif %}   
+    </table>
 </div>
     
 {% endblock content %}

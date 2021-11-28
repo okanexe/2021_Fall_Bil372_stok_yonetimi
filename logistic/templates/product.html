@@ -1,15 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="sidebar">
-    <a href="/person/update">Personel Guncelleme</a>
-    <a href="/person/add">Personel Ekle</a>
-    <a href="/person/list">Personel Listesi</a>
-</div>
 {% with messages=get_flashed_messages(with_categories=true) %}
  {% for category, message in messages %}
  <div class="success">
     <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-    Personal is inserted
+    Urun Eklendi
     <style>
         .alert {
           opacity: 1;
@@ -40,40 +35,58 @@
         </script>
 </div>
 
- {% endfor %}
+{% endfor %}
 {% endwith %}
 
-<div class="person_add">
-    <h2 class="title">Personel Ekle</h2>
+<div class="column is-4 is-offset-4">
+    <h2 class="title">Urun Ekleme</h2>
     <div class="box">
-        <form method="POST" action="/person/add">
+        <form method="POST" action="/product/add">
             <div class="field">
                 <div class="control">
-                    <input class="input is-large" type="text" name="ssn" placeholder="ssn" autofocus="">
+                    <SELECT name="getproduct" style="font-family:verdana">
+                    {% for per in product_list %}
+                        <OPTION value={{per}}>{{per}}</OPTION>
+                    {% endfor %}
+                    </SELECT>
                 </div>
             </div>
             <br>
             <div class="field">
                 <div class="control">
-                    <input class="input is-large" type="text" name="personal_name" placeholder="personal name" autofocus="">
+                    <input class="input is-large" type="text" name="product_id" placeholder="id" autofocus="">
                 </div>
             </div>
             <br>
             <div class="field">
                 <div class="control">
-                    <input class="input is-large" type="text" name="job_title" placeholder="job title">
+                    <input class="input is-large" type="text" name="product_name" placeholder="product name" autofocus="">
                 </div>
             </div>
             <br>
             <div class="field">
                 <div class="control">
-                    <input class="input is-large" type="text" name="email" placeholder="email" autofocus="">
+                    <input class="input is-large" type="text" name="price" placeholder="price">
                 </div>
             </div>
             <br>
             <div class="field">
                 <div class="control">
-                    <input class="input is-large" type="text" name="phone_number" placeholder="phone number" autofocus="">
+                    Son kullanma tarihi:
+                    <br>
+                    <input class="input is-large" type="date" name="expiration_date" placeholder="date" autofocus="">
+                </div>
+            </div>
+            <br>
+            <div class="field">
+                <div class="control">
+                    <input class="input is-large" type="text" name="kdv" placeholder="kdv" autofocus="">
+                </div>
+            </div>
+            <br>
+            <div class="field">
+                <div class="control">
+                    <input class="input is-large" type="text" name="quantity" placeholder="quantity or type" autofocus="">
                 </div>
             </div>
             <br>
