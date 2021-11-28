@@ -204,7 +204,20 @@ depolarin yonetiminde kullanilacak sayfa
 '''
 @app.route("/depo/arrange", methods = ['POST', 'GET'])
 def depot_arrangnment():
-    return render_template("depoArrangment.html",title="Depo Yonetim")
+    depos = store.query.all()
+    store_ids = [item.store_id for item in depos]
+    if request.method == 'POST':
+        data = request.form
+        store_id = data.get('get_store_id')
+        data_dict = dict((key, request.form.get(key)) for key in data.keys())
+        data_dict.pop('get_store_id')
+        for k in data.keys():
+            if data_dict.get(k) == '':
+                data_dict.pop(k)
+        store.query.filter_by(store_id=str(store_id)).update(data_dict)
+        db.session.commit()
+        return render_template("store_update.html")
+    return render_template("store_update.html", store_list=store_ids)
 
 @app.route("/product/add", methods = ['POST', 'GET'])
 def product_add():
