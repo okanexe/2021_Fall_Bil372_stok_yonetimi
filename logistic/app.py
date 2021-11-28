@@ -1,21 +1,29 @@
-from flask import Flask,flash, render_template, request,redirect, url_for, session
+from flask import Flask,flash, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Float, Integer
-import psycopg2 
-import psycopg2.extras
-import re 
+from flask import Flask, render_template, redirect, url_for
+from flask_bootstrap import Bootstrap
+from flask_wtf import FlaskForm 
+from wtforms import StringField, PasswordField, BooleanField
+from wtforms.validators import InputRequired, Email, Length
+from flask_sqlalchemy  import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a989e8c0679101b2fa3f510eea014e41'
 DB_URL = 'postgresql+psycopg2://{user}:{pw}@{url}/{db}'.format(
-    user='okans',
-    pw='',
-    url='localhost:5432',
+    user='postgres',
+    pw='1234',
+    url='localhost:5433',
     db='logistic'
 )
 app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
 db = SQLAlchemy(app)
+bootstrap = Bootstrap(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 
 class address(db.Model):
@@ -131,106 +139,30 @@ class product_demand(db.Model):
     store_id = db.Column(db.Integer, db.ForeignKey('store.store_id'), nullable=False)
     branch_id = db.Column(db.Integer, db.ForeignKey('branch.branch_id'), nullable=False)
     
-class users(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    fullname = db.Column(db.String(100), nullable=False)
-    username = db.Column(db.String(50), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
-    email = db.Column(db.String(50), unique=True, nullable=False)
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(15), unique=True)
+    email = db.Column(db.String(50), unique=True)
+    password = db.Column(db.String(180))
+    
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+class LoginForm(FlaskForm):
+    username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
+    password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
+    remember = BooleanField('remember me')
+
+class RegisterForm(FlaskForm):
+    email = StringField('email', validators=[InputRequired(), Email(message='Invalid email'), Length(max=50)])
+    username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
+    password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
 
 
 @app.route("/")
-def home():
-    # Check if user is loggedin
-    if 'loggedin' in session:
-    
-        # User is loggedin show them the home page
-        return render_template('home.html', username=session['username'])
-    # User is not loggedin redirect to login page
-    return redirect(url_for('login'))
-    
-@app.route('/login/', methods=['GET', 'POST'])
-def login():
-    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-   
-    # Check if "username" and "password" POST requests exist (user submitted form)
-    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
-        username = request.form.get('username')  
-        password = request.form.get('password')
-        print(password)
- 
-        # Check if account exists using MySQL
-        cursor.execute('SELECT * FROM users WHERE username = %s', (username,))
-        # Fetch one record and return result
-        account = cursor.fetchone()
- 
-        if account:
-            password_rs = account['password']
-            print(password_rs)
-            # If account exists in users table in out database
-            if check_password_hash(password_rs, password):
-                # Create session data, we can access this data in other routes
-                session['loggedin'] = True
-                session['id'] = account['id']
-                session['username'] = account['username']
-                # Redirect to home page
-                return redirect(url_for('home'))
-            else:
-                # Account doesnt exist or username/password incorrect
-                flash('Incorrect username/password')
-        else:
-            # Account doesnt exist or username/password incorrect
-            flash('Incorrect username/password')
- 
-    return render_template('login.html')
-  
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
- 
-    # Check if "username", "password" and "email" POST requests exist (user submitted form)
-    if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form:
-        # Create variables for easy access
-        fullname = request.form.get('fullname')
-        username = request.form.get('username')
-        password = request.form.get('password')
-        email = request.form.get('email')
-    
-        _hashed_password = generate_password_hash(password)
- 
-        #Check if account exists using MySQL
-        cursor.execute('SELECT * FROM users WHERE username = %s', (username,))
-        account = cursor.fetchone()
-        print(account)
-        # If account exists show error and validation checks
-        if account:
-            flash('Account already exists!')
-        elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-            flash('Invalid email address!')
-        elif not re.match(r'[A-Za-z0-9]+', username):
-            flash('Username must contain only characters and numbers!')
-        elif not username or not password or not email:
-            flash('Please fill out the form!')
-        else:
-            # Account doesnt exists and the form data is valid, now insert new account into users table
-            cursor.execute("INSERT INTO users (fullname, username, password, email) VALUES (%s,%s,%s,%s)", (fullname, username, _hashed_password, email))
-            conn.commit()
-            flash('You have successfully registered!')
-    elif request.method == 'POST':
-        # Form is empty... (no POST data)
-        flash('Please fill out the form!')
-    # Show registration form with message (if any)
-    return render_template('register.html')
-   
-   
-@app.route('/logout')
-def logout():
-    # Remove session data, this will log the user out
-   session.pop('loggedin', None)
-   session.pop('id', None)
-   session.pop('username', None)
-   # Redirect to login page
-   return redirect(url_for('login'))
+def index():
+    return render_template("index.html",title="Hosgeldiniz")
 
 '''
     burasi person listelenmesi için kullanilacak
@@ -281,6 +213,47 @@ buradaki dashboad methodu personel ekleme ve personel yonetiminde kullanilacakti
 @app.route("/personel", methods = ['POST', 'GET'])
 def dashboard():
     return render_template("dashboard.html",title="Personel Yonetim")
+
+@app.route("/login", methods = ['POST', 'GET'])
+def login():
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user:
+            if check_password_hash(user.password, form.password.data):
+                login_user(user, remember=form.remember.data)
+                return redirect(url_for('dashboard'))
+
+        return '<h1>Invalid username or password</h1>'
+        #return '<h1>' + form.username.data + ' ' + form.password.data + '</h1>'
+
+    return render_template('login.html', form=form)
+
+@app.route("/signup", methods = ['POST', 'GET'])
+def signup():
+    form = RegisterForm()
+
+    if form.validate_on_submit():
+        hashed_password = generate_password_hash(form.password.data, method='sha256')
+        new_user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+
+        return '<h1>New user has been created!</h1>'
+        #return '<h1>' + form.username.data + ' ' + form.email.data + ' ' + form.password.data + '</h1>'
+
+    return render_template('signup.html', form=form)
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+    
+    
+    
+    
 
 '''
 depolarin listelenmesinde ullanilacak olan method

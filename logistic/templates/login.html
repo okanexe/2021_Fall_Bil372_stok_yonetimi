@@ -1,31 +1,26 @@
-{% extends "layout.html" %}
-{% block content %}
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
-  <div class="login-box" >
-  <div class="login-header">Login</div>
-  <div class="login-body">
-    <p>Please enter your username and password</p>
-    <form class="form-group" action="{{ url_for('login') }}" method="post">
-        <label>Username</label>
-        <input type="text" class="form-control" name="username" placeholder="Username" id="username" required>
-        <label>Password</label>
-        <input type="password" class="form-control" name="password" placeholder="Password" id="password" required>
-        <input type="checkbox" value="checked"><b>Remember</b>
-        <input type="submit" value="Login" class="form-control btn btn-success " name="">
-    </form>
-    {% with messages = get_flashed_messages()  %}
-    {% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-      {{ message }}
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">×</span>
-      </button>
-    </div>
-    {% endfor %}
-    {% endif %}
-    {% endwith %}
-    <p>No account <a href="{{ url_for('register') }}">Register</a></p>
-  </div>
- </div>
-{% endblock content %}
+{% block title %}
+Login
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+
+      <form class="form-signin" method="POST" action="/login">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        {{ form.hidden_tag() }}
+        {{ wtf.form_field(form.username) }}
+        {{ wtf.form_field(form.password) }}
+        {{ wtf.form_field(form.remember) }}
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      </form>
+
+    </div> <!-- /container -->
+{% endblock %}
