@@ -1,0 +1,63 @@
+{% extends "layout.html"  %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+Sign Up
+{% endblock %}
+{% with messages=get_flashed_messages(with_categories=true) %}
+ {% for category, message in messages %}
+ <div class="success">
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+      kullanici Eklendi
+        <style>
+        .alert {
+          opacity: 1;
+          transition: opacity 0.6s; /* 600ms to fade out */
+        }
+        </style>
+        
+        <script>
+        // Get all elements with class="closebtn"
+        var close = document.getElementsByClassName("closebtn");
+        var i;
+        
+        // Loop through all close buttons
+        for (i = 0; i < close.length; i++) {
+          // When someone clicks on a close button
+          close[i].onclick = function(){
+        
+            // Get the parent of <span class="closebtn"> (<div class="alert">)
+            var div = this.parentElement;
+        
+            // Set the opacity of div to 0 (transparent)
+            div.style.opacity = "0";
+        
+            // Hide the div after 600ms (the same amount of milliseconds it takes to fade out)
+            setTimeout(function(){ div.style.display = "none"; }, 600);
+          }
+        }
+        </script>
+</div>
+
+{% endfor %}
+{% endwith %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <form class="form-signin" method="POST" action="/signup">
+    <h2 class="form-signin-heading">Sign Up</h2>
+    {{ form.hidden_tag() }}
+    {{ wtf.form_field(form.username) }}
+    {{ wtf.form_field(form.email) }}
+    {{ wtf.form_field(form.password) }}
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign Up</button>
+  </form>
+
+</div> <!-- /container -->
+{% endblock %}

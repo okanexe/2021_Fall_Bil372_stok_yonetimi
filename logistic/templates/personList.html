@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="sidebar">
+    <a href="/person/update">Personel Guncelleme</a>
+    <a href="/person/add">Personel Ekle</a>
+    <a href="/person/list">Personel Listesi</a>
+</div>
+<h2 >Personel listesi</h2>
+<div>
+    <table>
+        <tr>
+            <th>Ssn</th>
+            <th>Name</th>
+            <th>Job Title</th>
+            <th>Email</th>
+            <th>Phone number</th>
+          </tr>
+        {% if content %}
+            {% for person in content %}
+                <tr>
+                    <td>{{person.ssn}}</td>
+                    <td>{{person.personal_name}}</td>
+                    <td>{{person.job_title}}</td>
+                    <td>{{person.email}}</td>
+                    <td>{{person.phone_number}}</td>
+                </tr>
+                    
+            {% endfor %}
+        {% endif %}   
+    </table>
+</div>
+    
+{% endblock content %}

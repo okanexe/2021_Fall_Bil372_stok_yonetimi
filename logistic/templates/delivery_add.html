@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="sidebar">
+    <a href="/delivery/list">Sevkiyat listesi</a>
+    <a href="/delivery/add">Sevkiyat ekle</a>
+</div>
+{% with messages=get_flashed_messages(with_categories=true) %}
+ {% for category, message in messages %}
+ <div class="success">
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+    Sevkiyat eklendi
+    <style>
+        .alert {
+          opacity: 1;
+          transition: opacity 0.6s; /* 600ms to fade out */
+        }
+        </style>
+
+        <script>
+        // Get all elements with class="closebtn"
+        var close = document.getElementsByClassName("closebtn");
+        var i;
+
+        // Loop through all close buttons
+        for (i = 0; i < close.length; i++) {
+          // When someone clicks on a close button
+          close[i].onclick = function(){
+
+            // Get the parent of <span class="closebtn"> (<div class="alert">)
+            var div = this.parentElement;
+
+            // Set the opacity of div to 0 (transparent)
+            div.style.opacity = "0";
+
+            // Hide the div after 600ms (the same amount of milliseconds it takes to fade out)
+            setTimeout(function(){ div.style.display = "none"; }, 600);
+          }
+        }
+        </script>
+</div>
+
+ {% endfor %}
+{% endwith %}
+
+<div class="delivery_add">
+    <h2 class="title">Sevkiyat Ekle</h2>
+    <div class="box">
+        <form method="POST" action="/delivery/add">
+            <div class="field">
+                <div class="control">
+                    <input class="input is-large" type="text" name="delivery_id" placeholder="delivery id" autofocus="">
+                </div>
+            </div>
+            <br>
+            <div class="field">
+                <div class="control">
+                    <input class="input is-large" type="text" name="store_id" placeholder="store id" autofocus="">
+                </div>
+            </div>
+            <br>
+            <div class="field">
+                <div class="control">
+                    <input class="input is-large" type="text" name="branch_id" placeholder="branch id">
+                </div>
+            </div>
+            <br>
+            <div class="field">
+                <div class="control">
+                    <input class="input is-large" type="text" name="vehicle_id" placeholder="vehicle id" autofocus="">
+                </div>
+            </div>
+            <br>
+            <button class="button is-block is-info is-large is-fullwidth">add</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

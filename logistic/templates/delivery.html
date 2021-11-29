@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="sidebar">
+    <a href="/delivery/list">Sevkiyat listesi</a>
+    <a href="/delivery/add">Sevkiyat ekle</a>
+</div>
+<h2>Sevkiyat listesi</h2>
+<div >
+    <table>
+        <tr>
+            <th>Delivery ID</th>
+            <th>Store Name</th>
+            <th>Branch name</th>
+            <th>Vehicle Plate</th>
+          </tr>
+        {% if content %}
+            {% for ind in content %}
+                <tr>
+                    <td>{{ind.delivery_id}}</td>
+                    <td>{{ind.store_name}}</td>
+                    <td>{{ind.branch_name}}</td>
+                    <td>{{ind.plate}}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </table>
+</div>
+
+{% endblock content %}
